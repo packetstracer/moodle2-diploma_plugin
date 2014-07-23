@@ -11,6 +11,7 @@ Main added features:
 - UUID assign to every generated certificate.
 - Url for certificate validation, and url for extra download when the student has no access to the course.
 - Course history tracking for student and teachers even when the course is finished/deleted. (This depends on the diploma_history block just to access the pages through the block). Teachers can check the course history of his students and their associated certificates, students can check their course trackings and associated certificates.
+- Redisigned data model, with improved configuration storage via json 
 
 If you need more info or have any doubts don't hesitate to contact me in order to solve them. 
  
