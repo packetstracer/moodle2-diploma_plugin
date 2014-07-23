@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/diploma/db" VERSION="20140315" COMMENT="XMLDB file for Moodle mod/diploma"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="diploma" COMMENT="Defines diplomas" NEXT="diploma_tracking">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="coursealtname"/>
+        <FIELD NAME="coursealtname" TYPE="char" LENGTH="256" NOTNULL="false" SEQUENCE="false" COMMENT="an alternative course name" PREVIOUS="course" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="coursealtname" NEXT="intro"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="emailteachers"/>
+        <FIELD NAME="emailteachers" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="introformat" NEXT="emailothers"/>
+        <FIELD NAME="emailothers" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="emailteachers" NEXT="delivery"/>
+        <FIELD NAME="delivery" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="emailothers" NEXT="requiredtime"/>
+        <FIELD NAME="requiredtime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="delivery" NEXT="diplomatype"/>
+        <FIELD NAME="diplomatype" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="requiredtime" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="diplomatype" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="deleted"/>
+        <FIELD NAME="deleted" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="logical delete" PREVIOUS="timemodified" NEXT="metadata"/>
+        <FIELD NAME="metadata" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="additionl configuration" PREVIOUS="deleted"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for diploma"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="diploma_tracking" COMMENT="tracks user courses" PREVIOUS="diploma" NEXT="diploma_issues">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="coursename"/>
+        <FIELD NAME="coursename" TYPE="char" LENGTH="256" NOTNULL="true" SEQUENCE="false" COMMENT="course name when the user was unenrolled or deleted from course" PREVIOUS="courseid" NEXT="enroldate"/>
+        <FIELD NAME="enroldate" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="coursename" NEXT="unenroldate"/>
+        <FIELD NAME="unenroldate" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="enroldate" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" PREVIOUS="unenroldate" NEXT="time"/>
+        <FIELD NAME="time" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="time spent on course when the user was unenroled or deleted from the course" PREVIOUS="grade"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="diploma_issues" COMMENT="Info about issued diplomas" PREVIOUS="diploma_tracking">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="diplomaid"/>
+        <FIELD NAME="diplomaid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="courseid" NEXT="trackingid"/>
+        <FIELD NAME="trackingid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="id from mdl_diploma_tracking" PREVIOUS="diplomaid" NEXT="coursename"/>
+        <FIELD NAME="coursename" TYPE="char" LENGTH="256" NOTNULL="false" SEQUENCE="false" COMMENT="alternative course name" PREVIOUS="trackingid" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="coursename" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5" PREVIOUS="timecreated" NEXT="serialnumber"/>
+        <FIELD NAME="serialnumber" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false" COMMENT="UUIDv4 generated code" PREVIOUS="grade"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for diploma_issues" NEXT="fk_diploma"/>
+        <KEY NAME="fk_diploma" TYPE="foreign" FIELDS="diplomaid" REFTABLE="diploma" REFFIELDS="id" PREVIOUS="primary" NEXT="fk_tracking"/>
+        <KEY NAME="fk_tracking" TYPE="foreign" FIELDS="trackingid" REFTABLE="diploma_tracking" REFFIELDS="id" COMMENT="tracking id from mdl_diploma_tracking" PREVIOUS="fk_diploma"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>
